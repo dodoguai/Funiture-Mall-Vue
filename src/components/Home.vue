@@ -1,7 +1,13 @@
 <template>
     <div class="wrapper">
+        
         <v-head></v-head>
         <v-sidebar></v-sidebar>
+        <div class="content-box">
+            <div class="content">
+                <router-view></router-view>
+            </div>
+        </div>
     </div>
 </template>
 
