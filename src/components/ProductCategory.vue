@@ -64,9 +64,9 @@
     <el-table-column
       label="设置"
      >
-      <template >
-        <el-button size="mini">查看下级</el-button>
-        
+       <template slot-scope="scope">
+        <el-button size="mini" v-if='scope.row.level==0' @click="viewafter(scope.row.id)">查看下级</el-button>
+        <el-button size="mini" v-if='scope.row.level==1' disabled>查看下级</el-button>
       </template>
     </el-table-column>
     <el-table-column label="操作">
@@ -201,6 +201,18 @@ export default {
    computed: {},
 
    methods: {
+      viewafter(id){
+         let _this=this;
+            this.$axios({
+               method:'get',
+               url:'/business/admin/productCategory/list/get-children/'+id,
+               data:{},
+            }).then(res=>{
+               console.log(res)
+               _this.tablelist=res.data.content.children
+               console.log(res.data.content.children)
+               })
+      },
       handlechange(page){
          console.log(page)
          this.getproductCategory(page,this.pagesize);
