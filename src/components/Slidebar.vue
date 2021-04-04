@@ -63,7 +63,7 @@ export default {
                 },
                 {
                     icon: 'el-icon-lx-cascades',
-                    index: 'table',
+                    index: '/productcategory',
                     title: '商品分类管理'
                 },
                 {

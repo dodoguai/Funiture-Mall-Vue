@@ -18,6 +18,10 @@ const routes = [
       path:'/brandinfo',
       component:()=>import('../components/Brandinfo.vue')
     },
+    {
+      path:'/productcategory',
+      component:()=>import('../components/ProductCategory.vue')
+    },
   ]
   },
   {
