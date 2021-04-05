@@ -2,79 +2,77 @@
   <div>
     <div class="box-card">
       <div><i class="el-icon-tickets"></i> <span>数据列表</span></div>
-      <el-button size="mini" @click="dialogFormVisible = true">添加</el-button>
+      <el-button size="mini" @click="changetag(1)">添加</el-button>
     </div>
-    <el-dialog title="添加类型" :visible.sync="dialogFormVisible" width="550px">
-      <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item label="类型名称" label-width="120px" required prop="name">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="onsubmit('form')">确 定</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-    <el-dialog
-      title="编辑类型"
-      :visible.sync="dialogFormVisible2"
-      width="550px"
-    >
-      <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item
-          label="类型名称"
-          label-width="120px"
-          required
-          prop="name2"
-        >
-          <el-input v-model="form.name2" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible2 = false">取 消</el-button>
-          <el-button type="primary" @click="onupdate('form')">确 定</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
     <el-table
       v-show="tag == 0"
       :data="tablelist"
       :header-cell-style="{ 'text-align': 'center' }"
       :cell-style="{ 'text-align': 'center' }"
       style="width: 100%"
+      :row-style="{ height: '180px' }"
     >
       <el-table-column type="index" label="编号"> </el-table-column>
-      <el-table-column label="类型名称" width="380">
+      <el-table-column label="商品图片" width="180">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="属性数量" width="180">
+      <el-table-column label="商品名称" width="150">
         <template slot-scope="scope">
-          <el-tag size="medium">{{ scope.row.specCount }}</el-tag>
+          <span style="margin-left: 10px">Huawei P30</span>
+          <span style="margin-left: 10px">品牌：</span>
         </template>
       </el-table-column>
-      <el-table-column label="参数数量" width="100">
+      <el-table-column label="价格/货号" width="80">
         <template slot-scope="scope">
-          <el-tag size="medium">{{ scope.row.paramCount }}</el-tag>
+          <el-tag size="medium">价格：{{ scope.row.productCount }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="设置">
+
+      <el-table-column label="标签" width="180">
+        <template slot-scope="scope"
+          >上架：
+          <el-switch
+            v-model="scope.row.navStatus"
+            :active-value="1"
+            :inactive-value="0"
+          ></el-switch>
+          <br />
+          审核：
+          <el-switch
+            v-model="scope.row.navStatus"
+            :active-value="1"
+            :inactive-value="0"
+          ></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" width="80">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handlespec(scope.row.id, 0, scope.row.name)"
-            >属性列表</el-button
-          >
-          <el-button
-            size="mini"
-            @click="handlespec(scope.row.id, 1, scope.row.name)"
-            >参数列表</el-button
-          >
+          <span style="margin-left: 10px">{{ scope.row.sort }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="sku库存" width="80">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="销量" width="80">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审核状态" width="80">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button size="mini" @click="handleEdit(scope.row.id)"
+            >编辑</el-button
+          >
           <el-button
             size="mini"
             type="danger"
@@ -176,8 +174,6 @@
 export default {
   data() {
     return {
-      dialogFormVisible: false,
-      dialogFormVisible2: false,
       tablelist: [],
       pageindex: 1,
       pagesize: 3,
@@ -192,27 +188,18 @@ export default {
         navStatus: 1,
         parentId: "",
         sort: 0,
-        name2: "",
       },
       rules: {
         name: [
-          { required: true, message: "请输入类型名称", trigger: "blur" },
+          { required: true, message: "请输入品牌名称", trigger: "blur" },
           {
-            min: 1,
+            min: 3,
             max: 15,
-            message: "长度在 1 到 15 个字符",
+            message: "长度在 3 到 15 个字符",
             trigger: "blur",
           },
         ],
-        name2: [
-          { required: true, message: "请输入类型名称", trigger: "blur" },
-          {
-            min: 1,
-            max: 15,
-            message: "长度在 1 到 15 个字符",
-            trigger: "blur",
-          },
-        ],
+        icon: [{ required: true, message: "请输入图片url", trigger: "blur" }],
       },
     };
   },
@@ -224,23 +211,37 @@ export default {
   computed: {},
 
   methods: {
-    handlespec(id, num, name) {
-      console.log(id);
-      console.log(num);
-      this.$router.push({
-        path: "/attributespec",
-        query: { id: id, type: num, name: name },
+    viewafter(id) {
+      let _this = this;
+      this.$axios({
+        method: "get",
+        url: "/business/admin/productCategory/list/get-children/" + id,
+        data: {},
+      }).then((res) => {
+        console.log(res);
+        _this.tablelist = res.data.content.children;
+        console.log(res.data.content.children);
       });
     },
     handlechange(page) {
       console.log(page);
-      this.pageindex = page;
       this.getproductCategory(page, this.pagesize);
     },
-    handleEdit(row) {
-      this.form.name2 = row.name;
-      this.form.id = row.id;
-      this.dialogFormVisible2 = true;
+    handleEdit(id) {
+      let _this = this;
+      this.form.id = id;
+      this.changetag(2);
+      this.$axios({
+        method: "get",
+        url: "/business/admin/productCategory/getCategoryById/" + id,
+        data: {},
+      }).then((res) => {
+        _this.productinfo = res.data.content;
+        console.log(_this.productinfo);
+        Object.keys(_this.form).forEach((key) => {
+          _this.form[key] = _this.productinfo[key];
+        });
+      });
     },
     changetag(num) {
       let _this = this;
@@ -258,7 +259,7 @@ export default {
       let param = { page: pageindex, size: pagesize };
       this.$axios({
         method: "post",
-        url: "/business/admin/productAttributeCategory/list",
+        url: "/business/admin/productCategory/list",
         data: param,
       }).then((res) => {
         this.tablelist = res.data.content.list;
@@ -274,7 +275,7 @@ export default {
         .then(() => {
           this.$axios({
             method: "delete",
-            url: "/business/admin/productAttributeCategory/delete/" + proid,
+            url: "/business/admin/productCategory/delete/" + proid,
             data: {},
           }).then((res) => {
             console.log(res);
@@ -293,22 +294,31 @@ export default {
         });
     },
     onsubmit(formName) {
-      let _this = this;
-      let formdata = new FormData();
-      formdata.append("name", this.form.name);
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          let param = {
+            name: this.form.name,
+            icon: this.form.icon,
+            keywords: this.form.keywords,
+            parentId: this.form.parentId,
+            navStatus: this.form.navStatus,
+            level: 0,
+            productCount: 0,
+            sort: this.form.sort,
+            id: "",
+          };
+          console.log(param);
           this.$axios({
             method: "post",
-            url: "/business/admin/productAttributeCategory/create",
-            data: formdata,
+            url: "/business/admin/productCategory/create",
+            data: param,
           }).then((res) => {
+            console.log(res);
             if (res.data.code == 200) {
               this.$message({
                 type: "success",
                 message: "创建成功",
               });
-              _this.getproductCategory(this.pageindex, this.pagesize);
             } else {
               this.$message({
                 type: "info",
@@ -321,27 +331,34 @@ export default {
           return false;
         }
       });
-      this.dialogFormVisible = false;
     },
     onupdate(formName) {
-      let _this = this;
-      let formdata = new FormData();
-      formdata.append("name", this.form.name2);
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          let param = {
+            name: this.form.name,
+            icon: this.form.icon,
+            keywords: this.form.keywords,
+            parentId: this.form.parentId,
+            navStatus: this.form.navStatus,
+            level: 0,
+            productCount: 0,
+            sort: this.form.sort,
+            id: this.form.id,
+          };
+          console.log(param);
           this.$axios({
             method: "post",
-            url:
-              "/business/admin/productAttributeCategory/update/" + this.form.id,
-            data: formdata,
+            url: "/business/admin/productCategory/update",
+            data: param,
           }).then((res) => {
+            console.log(res);
             if (res.data.code == 200) {
               this.$message({
                 type: "success",
                 message: "更新成功",
               });
-              _this.dialogFormVisible2 = false;
-              _this.getproductCategory(this.pageindex, this.pagesize);
+              this.getproductCategory(0, 10);
             } else {
               this.$message({
                 type: "info",
@@ -354,6 +371,8 @@ export default {
           return false;
         }
       });
+
+      this.changetag(0);
     },
   },
 };
@@ -369,6 +388,6 @@ export default {
   width: 70%;
 }
 .el-form-item {
-  text-align: center;
+  text-align: left;
 }
 </style>

@@ -79,7 +79,7 @@ export default {
                 },
                 {
                     icon: 'el-icon-pie-chart',
-                    index: 'charts',
+                    index: '/productcreate',
                     title: '商品管理'
                 },
                 // {
@@ -112,6 +112,11 @@ export default {
                     icon: 'el-icon-lx-redpacket_fill',
                      index: '/',
                      title: '商品订单管理'
+                 },
+                 {
+                    icon: 'el-icon-lx-redpacket_fill',
+                     index: '/test',
+                     title: '商品添加测试'
                  }
             ]
         };

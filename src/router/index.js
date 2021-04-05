@@ -30,6 +30,14 @@ const routes = [
       path:'/attributespec',
       component:()=>import('../components/AttributeSpec.vue')
     },
+    {
+      path:'/productcreate',
+      component:()=>import('../components/ProductCreate.vue')
+    },
+    {
+      path:'/test',
+      component:()=>import('../components/Test.vue')
+    }
   ]
   },
   {
