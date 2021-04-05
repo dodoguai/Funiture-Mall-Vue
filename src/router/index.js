@@ -22,6 +22,14 @@ const routes = [
       path:'/productcategory',
       component:()=>import('../components/ProductCategory.vue')
     },
+    {
+      path:'/productattributecategory',
+      component:()=>import('../components/ProductAttributeCategory.vue')
+    },
+    {
+      path:'/attributespec',
+      component:()=>import('../components/AttributeSpec.vue')
+    },
   ]
   },
   {

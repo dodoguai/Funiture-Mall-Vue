@@ -74,7 +74,7 @@ export default {
               
                 {
                     icon: 'el-icon-lx-emoji',
-                    index: 'icon',
+                    index: '/productattributecategory',
                     title: '商品属性分类管理'
                 },
                 {
