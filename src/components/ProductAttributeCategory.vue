@@ -7,11 +7,11 @@
     <el-dialog title="添加类型" :visible.sync="dialogFormVisible" width="550px">
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="类型名称" label-width="120px" required prop="name">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="form.name" autocomplete="off" @keyup.enter.native="onsubmit('form')" ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="onsubmit('form')">确 定</el-button>
+          <el-button type="primary" @click="onsubmit('form')" >确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -84,84 +84,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="createnew" v-if="tag == 1">
-      <el-form ref="form" :rules="rules" :model="form" label-width="150px">
-        <el-form-item label="分类名称" required prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="分类图标" required prop="icon">
-          <el-input v-model="form.icon"></el-input>
-        </el-form-item>
-        <el-form-item label="上级分类">
-          <el-select v-model="form.parentId" clearable placeholder="请选择">
-            <el-option
-              v-for="item in categorylevel1"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排序">
-          <el-input v-model="form.sort"></el-input>
-        </el-form-item>
-        <el-form-item label="是否显示在导航栏">
-          <el-radio-group v-model="form.navStatus">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="关键词">
-          <el-input type="textarea" v-model="form.keywords"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onsubmit('form')"
-            >立即创建</el-button
-          >
-          <el-button>取消</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="updatenew" v-if="tag == 2">
-      <el-form ref="form" :rules="rules" :model="form" label-width="150px">
-        <el-form-item label="分类名称" required prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="分类图标" required prop="icon">
-          <el-input v-model="form.icon"></el-input>
-        </el-form-item>
-        <el-form-item label="上级分类">
-          <el-select v-model="form.parentId" clearable placeholder="请选择">
-            <el-option
-              v-for="item in categorylevel1"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排序">
-          <el-input v-model="form.sort"></el-input>
-        </el-form-item>
-        <el-form-item label="是否显示在导航栏">
-          <el-radio-group v-model="form.navStatus">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="关键词">
-          <el-input type="textarea" v-model="form.keywords"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onupdate('form')"
-            >立即更新</el-button
-          >
-          <el-button @click="changetag(0)">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+
     <el-pagination
       @current-change="handlechange"
       background
@@ -242,21 +165,13 @@ export default {
       this.form.id = row.id;
       this.dialogFormVisible2 = true;
     },
-    changetag(num) {
-      let _this = this;
-      this.tag = num;
-      this.$axios({
-        method: "get",
-        url: "/business/admin/productCategory/list/withChildren",
-        data: {},
-      }).then((res) => {
-        console.log(res);
-        _this.categorylevel1 = res.data.content;
-      });
-    },
+
     getproductCategory(pageindex, pagesize) {
       let param = { page: pageindex, size: pagesize };
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "post",
         url: "/business/admin/productAttributeCategory/list",
         data: param,
@@ -265,7 +180,6 @@ export default {
       });
     },
     handledelete(proid) {
-      let _this = this;
       this.$confirm("此操作将永久删除该商品分类, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -273,6 +187,9 @@ export default {
       })
         .then(() => {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "delete",
             url: "/business/admin/productAttributeCategory/delete/" + proid,
             data: {},
@@ -293,12 +210,14 @@ export default {
         });
     },
     onsubmit(formName) {
-      let _this = this;
       let formdata = new FormData();
       formdata.append("name", this.form.name);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url: "/business/admin/productAttributeCategory/create",
             data: formdata,
@@ -308,7 +227,7 @@ export default {
                 type: "success",
                 message: "创建成功",
               });
-              _this.getproductCategory(this.pageindex, this.pagesize);
+              this.getproductCategory(this.pageindex, this.pagesize);
             } else {
               this.$message({
                 type: "info",
@@ -324,12 +243,14 @@ export default {
       this.dialogFormVisible = false;
     },
     onupdate(formName) {
-      let _this = this;
       let formdata = new FormData();
       formdata.append("name", this.form.name2);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url:
               "/business/admin/productAttributeCategory/update/" + this.form.id,
@@ -340,8 +261,8 @@ export default {
                 type: "success",
                 message: "更新成功",
               });
-              _this.dialogFormVisible2 = false;
-              _this.getproductCategory(this.pageindex, this.pagesize);
+              this.dialogFormVisible2 = false;
+              this.getproductCategory(this.pageindex, this.pagesize);
             } else {
               this.$message({
                 type: "info",

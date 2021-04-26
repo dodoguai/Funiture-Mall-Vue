@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img :src="brandinfo.logo" />
+    <img :src="brandinfo.logo" class='brandlogo' />
     <div class="textinfo">{{ brandinfo.name }}</div>
     <el-button type="primary" @click="createnew">创建新品牌</el-button>
     <el-button type="primary" @click="updatenew">更新品牌信息</el-button>
@@ -11,8 +11,18 @@
         <el-form-item label="品牌名称" required prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="品牌logo(url)" prop="logo" required>
-          <el-input v-model="form.logo"></el-input>
+        <el-form-item label="品牌logo(url)" required prop="logo">
+          <el-upload
+            class="avatar-uploader"
+            action=""
+            :show-file-list="false"
+            :before-upload="beforeAvatarUpload"
+          >
+            <div class="uploadimgbox">
+              <img v-if="form.logo" :src="form.logo" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </div>
+          </el-upload>
         </el-form-item>
         <el-form-item label="品牌描述">
           <el-input type="textarea" v-model="form.brandStory"></el-input>
@@ -32,7 +42,17 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="品牌logo(url)" required prop="logo">
-          <el-input v-model="form.logo"></el-input>
+          <el-upload
+            class="avatar-uploader"
+            action=""
+            :show-file-list="false"
+            :before-upload="beforeAvatarUpload"
+          >
+            <div class="uploadimgbox">
+              <img v-if="form.logo" :src="form.logo" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </div>
+          </el-upload>
         </el-form-item>
         <el-form-item label="是否显示">
           <el-switch v-model="form.showStatus"></el-switch>
@@ -96,7 +116,10 @@ export default {
     console.log(this.$route.query.brandid);
     this.$axios({
       method: "get",
-      url: "/business/admin/brand/" + _this.$route.query.brandid,
+      headers: {
+        token: this.$store.state.token,
+      },
+      url: "/business/admin/brand/search/" + _this.$route.query.brandid,
       data: {},
     }).then((res) => {
       console.log(res);
@@ -104,6 +127,22 @@ export default {
     });
   },
   methods: {
+    beforeAvatarUpload(file){
+        console.log(this.imageUrl)
+        let _this=this;
+        let formdata=new FormData();
+        formdata.append('use',2),
+        formdata.append('file',file)
+        console.log(file)
+        this.$axios({
+         method:'post',
+         url:'/file/oss/upload',
+         data:formdata,
+        }).then(res=>{
+          this.form.logo=res.data.content.filePath;
+        })
+        return false
+      },
     createnew() {
       this.tag = 1;
     },
@@ -124,6 +163,9 @@ export default {
       })
         .then(() => {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "delete",
             url: "/business/admin/brand/delete/" + _this.$route.query.brandid,
             data: {},
@@ -156,6 +198,9 @@ export default {
             showStatus: this.form.showStatus,
           };
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url: "/business/admin/brand/create",
             data: param,
@@ -199,6 +244,9 @@ export default {
         showStatus: !this.form.showStatus - 0,
       };
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "post",
         url: "/business/admin/brand/update",
         data: param,
@@ -223,5 +271,9 @@ export default {
 <style lang='css' scoped>
 .el-switch {
   left: -500px !important;
+}
+.brandlogo{
+ width: 80%;
+ height:80% ;
 }
 </style>

@@ -31,6 +31,9 @@ export default {
     let param = { page: 0, size: 3 };
     this.$axios({
       method: "post",
+      headers: {
+        token: this.$store.state.token,
+      },
       url: "/business/admin/brand/list",
       data: param,
     }).then((res) => {
@@ -43,12 +46,16 @@ export default {
   computed: {},
 
   methods: {
+     
     load: function () {
       let param = { page: ++this.pageindex, size: 3 };
       if (this.tag == 1) {
       } else {
         console.log("这是第" + this.pageindex);
         this.$axios({
+          headers: {
+            token: this.$store.state.token,
+          },
           method: "post",
           url: "/business/admin/brand/list",
           data: param,

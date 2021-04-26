@@ -19,7 +19,7 @@
         </template>
       </el-table-column>
       <el-table-column label="商品名称" width="150">
-        <template slot-scope="scope">
+        <template>
           <span style="margin-left: 10px">Huawei P30</span>
           <span style="margin-left: 10px">品牌：</span>
         </template>
@@ -83,7 +83,148 @@
       </el-table-column>
     </el-table>
     <div class="createnew" v-if="tag == 1">
-      <el-form ref="form" :rules="rules" :model="form" label-width="150px">
+      <el-steps :active="active - 1" finish-status="success" align-center>
+        <el-step title="填写商品信息"></el-step>
+        <el-step title="填写商品属性"></el-step>
+      </el-steps>
+      <el-form
+        ref="form"
+        v-if="active == 1"
+        :rules="rules"
+        :model="form"
+        label-width="150px"
+      >
+        <el-form-item label="商品分类" required prop="name">
+          <el-cascader
+            v-model="form.categoryId"
+            :options="options"
+            @change="handleChangeCascader"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="商品名称" required prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品标题" required>
+          <el-input v-model="form.title"></el-input>
+        </el-form-item>
+        <el-form-item label="商品品牌">
+          <el-select v-model="form.brandId" clearable placeholder="请选择">
+            <el-option
+              v-for="item in categorylevel1"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商品介绍">
+          <el-input v-model="form.description"></el-input>
+        </el-form-item>
+        <el-form-item label="商品库存">
+          <el-input v-model="form.stock"></el-input>
+        </el-form-item>
+        <el-form-item label="是否上架">
+          <el-radio-group v-model="form.pubulishStatus">
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="商品价格">
+          <el-input v-model="form.price"></el-input>
+        </el-form-item>
+        <el-form-item label="重量（默认为kg）">
+          <el-input v-model="form.weight"></el-input>
+        </el-form-item>
+        <el-form-item label="排序">
+          <el-input v-model="form.keywords"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onsubmit('form')">下一步</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form
+        ref="form"
+        v-if="active == 2"
+        :rules="rules"
+        :model="form"
+        label-width="150px"
+      >
+        <el-form-item label="属性类型">
+          <el-select
+            v-model="form.attributeCategoryId"
+            @change="attributeChange"
+            clearable
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in arrtributecategory"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <div class="specbox">
+          <el-form-item label="商品规格">
+            <div 
+            :key="index" 
+            class="demonstration"
+              v-for="(item, index) in speclist"
+              
+            >
+              {{ item.name }}
+              
+              <el-checkbox-group v-model="checkedbox[index]">
+                <el-checkbox
+                  :key="it"
+                  :label="it"
+                  v-for="it in item.value"
+                  
+                  >{{ it }}</el-checkbox>
+              </el-checkbox-group>
+              <el-input v-model="newform[item.name]"></el-input>
+            </div>
+          </el-form-item>
+        </div>
+
+        <el-form-item label="商品参数">
+          <el-select v-model="form.parentId" clearable placeholder="请选择">
+            <el-option
+              v-for="item in categorylevel1"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商品相册">
+          <el-input v-model="form.sort"></el-input>
+        </el-form-item>
+        <el-form-item label="是否显示在导航栏">
+          <el-radio-group v-model="form.navStatus">
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="关键词">
+          <el-input type="textarea" v-model="form.keywords"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onsubmit('form')">下一步</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form
+        ref="form"
+        v-if="active == 3"
+        :rules="rules"
+        :model="form"
+        label-width="150px"
+      >
         <el-form-item label="分类名称" required prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -114,9 +255,7 @@
           <el-input type="textarea" v-model="form.keywords"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onsubmit('form')"
-            >立即创建</el-button
-          >
+          <el-button type="primary" @click="onsubmit('form')">下一步</el-button>
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
@@ -174,20 +313,36 @@
 export default {
   data() {
     return {
+      options: [], //商品分级分类
+      value: "",
+      active: 1,
+      checkedbox: [],
       tablelist: [],
       pageindex: 1,
       pagesize: 3,
       tag: 0,
+      newform: {},
+      skutable: [],
+      paramlist: [], //参数列表
+      speclist: [], //属性列表
       productinfo: "", //更新分类数据时会用到。
-      categorylevel1: [],
+      categorylevel1: [], //品牌列表
+      arrtributecategory: [], //属性分类列表
       form: {
         id: "",
         name: "",
-        icon: "",
-        keywords: "",
-        navStatus: 1,
-        parentId: "",
+        pic: "",
         sort: 0,
+        price: 0,
+        pubulishStatus: 0, //是否上架
+        weight: 0,
+        attributeCategoryId: "",
+        brandId: "",
+        stock: 0, //库存
+        title: "",
+        brandName: "",
+        description: "",
+        categoryId: "",
       },
       rules: {
         name: [
@@ -214,6 +369,9 @@ export default {
     viewafter(id) {
       let _this = this;
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
         url: "/business/admin/productCategory/list/get-children/" + id,
         data: {},
@@ -223,15 +381,74 @@ export default {
         console.log(res.data.content.children);
       });
     },
+    attributeChange(value) {
+      this.speclist = [];
+      this.paramlist = [];
+      this.newform = [];
+      this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
+        method: "get",
+        url:
+          "/business/admin/productAttributeCategory/list/withAttr/" +
+          value +
+          "?type=2",
+        data: {},
+      }).then((res) => {
+        console.log(res);
+        console.log(res.data.content.productAttributeList);
+        if (res.data.content.productAttributeList != "") {
+          let tmp = res.data.content.productAttributeList;
+
+          for (let i = 0; i < tmp.length; i++) {
+            if (tmp[i].type == 0) {
+              console.log('hihihi')
+              console.log('---------------')
+              this.speclist.push(tmp[i]);
+
+              console.log(this.speclist);
+            } else {
+              console.log('bbbb')
+              this.paramlist.push(tmp[i]);
+            }
+          }
+        }
+ 
+        console.log(this.speclist);
+    
+ 
+        for(var i=0;i<this.speclist.length;i++)
+        {
+          var strArr = this.speclist[i].value.split(',');
+
+          this.speclist[i].value=strArr
+          
+          var subArr=[]
+          subArr.push(strArr[0])
+          
+          this.checkedbox.push(subArr)
+
+        }
+         console.log(this.checkedbox)
+        console.log(this.paramlist);
+      });
+    },
     handlechange(page) {
       console.log(page);
       this.getproductCategory(page, this.pagesize);
+    },
+    handleChangeCascader(value) {
+      console.log(value[value.length - 1]);
     },
     handleEdit(id) {
       let _this = this;
       this.form.id = id;
       this.changetag(2);
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
         url: "/business/admin/productCategory/getCategoryById/" + id,
         data: {},
@@ -243,12 +460,48 @@ export default {
         });
       });
     },
+    refreshSkuList() {},
     changetag(num) {
       let _this = this;
       this.tag = num;
+      if (num == 1) {
+        this.$axios({
+          headers: {
+            token: this.$store.state.token,
+          },
+          method: "get",
+          url: "/business/admin/productCategory/list/withChildren",
+          data: "",
+        }).then((res) => {
+          // this.options=res.data.content.map(item=>{});
+          let b = [];
+          let c = res.data.content;
+          let childrend = [];
+          c.forEach((item) => {
+            if (item.children != "") {
+              console.log(item.children);
+              item.children.forEach((e) => {
+                childrend.push({
+                  value: e.id,
+                  label: e.name,
+                });
+              });
+              b.push({ value: item.id, label: item.name, children: childrend });
+              childrend = [];
+            } else {
+              b.push({ value: item.id, label: item.name });
+            }
+          });
+          console.log(b);
+          this.options = b;
+        });
+      }
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
-        url: "/business/admin/productCategory/list/withChildren",
+        url: "/business/admin/brand/listAll",
         data: {},
       }).then((res) => {
         console.log(res);
@@ -258,6 +511,9 @@ export default {
     getproductCategory(pageindex, pagesize) {
       let param = { page: pageindex, size: pagesize };
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "post",
         url: "/business/admin/productCategory/list",
         data: param,
@@ -274,6 +530,9 @@ export default {
       })
         .then(() => {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "delete",
             url: "/business/admin/productCategory/delete/" + proid,
             data: {},
@@ -294,43 +553,65 @@ export default {
         });
     },
     onsubmit(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          let param = {
-            name: this.form.name,
-            icon: this.form.icon,
-            keywords: this.form.keywords,
-            parentId: this.form.parentId,
-            navStatus: this.form.navStatus,
-            level: 0,
-            productCount: 0,
-            sort: this.form.sort,
-            id: "",
-          };
-          console.log(param);
-          this.$axios({
-            method: "post",
-            url: "/business/admin/productCategory/create",
-            data: param,
-          }).then((res) => {
-            console.log(res);
-            if (res.data.code == 200) {
-              this.$message({
-                type: "success",
-                message: "创建成功",
-              });
-            } else {
-              this.$message({
-                type: "info",
-                message: res.data.message,
-              });
-            }
-          });
-        } else {
-          alert("输入有错，请检查");
-          return false;
-        }
-      });
+      console.log(this.active);
+      if (this.active == 1) {
+        let param = { page: 0, size: 99 };
+        this.$axios({
+          headers: {
+            token: this.$store.state.token,
+          },
+          method: "post",
+          url: "/business/admin/productAttributeCategory/list",
+          data: param,
+        }).then((res) => {
+          this.arrtributecategory = res.data.content.list;
+          console.log(res.data.content.list);
+        });
+      }
+      if (this.active < 2) {
+        this.active++;
+      } else {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let param = {
+              name: this.form.name,
+              icon: this.form.icon,
+              keywords: this.form.keywords,
+              parentId: this.form.parentId,
+              navStatus: this.form.navStatus,
+              level: 0,
+              productCount: 0,
+              sort: this.form.sort,
+              id: "",
+            };
+            console.log(param);
+            this.$axios({
+              headers: {
+                token: this.$store.state.token,
+              },
+              method: "post",
+              url: "/business/admin/productCategory/create",
+              data: param,
+            }).then((res) => {
+              console.log(res);
+              if (res.data.code == 200) {
+                this.$message({
+                  type: "success",
+                  message: "创建成功",
+                });
+              } else {
+                this.$message({
+                  type: "info",
+                  message: res.data.message,
+                });
+              }
+            });
+          } else {
+            alert("输入有错，请检查");
+            return false;
+          }
+        });
+      }
     },
     onupdate(formName) {
       this.$refs[formName].validate((valid) => {
@@ -348,6 +629,9 @@ export default {
           };
           console.log(param);
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url: "/business/admin/productCategory/update",
             data: param,
@@ -382,6 +666,10 @@ export default {
   padding: 20px;
   display: flex;
   justify-content: space-between;
+}
+.specbox {
+  min-height: 100px;
+  background-color: pink;
 }
 .createnew {
   padding: 0, 15%;

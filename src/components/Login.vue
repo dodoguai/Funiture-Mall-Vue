@@ -20,13 +20,16 @@
             type="password"
             placeholder="请输入密码"
             v-model="param.password"
-            @keyup.enter.native="submitForm()"
           >
             <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
           </el-input>
         </el-form-item>
         <el-form-item prop="imgCode">
-          <el-input v-model="param.imgCode" placeholder="请输入验证码">
+          <el-input
+            v-model="param.imgCode"
+            placeholder="请输入验证码"
+            @keyup.enter.native="submitForm()"
+          >
             <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
           </el-input>
           <img
@@ -61,8 +64,12 @@
             <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
           </el-input>
         </el-form-item>
-         <el-form-item>
-          <el-input v-model="form.phone" type="phone" placeholder="请输入手机号">
+        <el-form-item>
+          <el-input
+            v-model="form.phone"
+            type="phone"
+            placeholder="请输入手机号"
+          >
             <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
           </el-input>
         </el-form-item>
@@ -100,14 +107,13 @@
         <div class="login-btn">
           <el-button type="primary" @click="register()">注册</el-button>
         </div>
-        
       </el-form>
     </div>
   </div>
 </template>
 
 <script>
-import request from '../router/request'
+import request from "../router/request";
 
 export default {
   data: function () {
@@ -161,20 +167,20 @@ export default {
     },
     register() {
       let param = {
-        'username': this.form.username,
-        'password': this.form.password,
-        'email': this.form.email,
-        'imgCode':this.form.imgCode,
-        'imageCodeToken':this.imgCode,
-        'phone':this.form.phone,
+        username: this.form.username,
+        password: this.form.password,
+        email: this.form.email,
+        imgCode: this.form.imgCode,
+        imageCodeToken: this.imgCode,
+        phone: this.form.phone,
       };
       request[1]({
-          method:'post',
-          url:'/system/admin/user/register',
-          data:param,
-      }).then(res=>{
-          console.log(res);
-      })
+        method: "post",
+        url: "/system/admin/user/register",
+        data: param,
+      }).then((res) => {
+        console.log(res);
+      });
     },
     freshImgCode() {
       this.imgCode = Math.random().toString(36).substr(5);
@@ -185,11 +191,12 @@ export default {
       this.$refs.login.validate((valid) => {
         if (valid) {
           let param = {
-          "username": this.param.username,
-          "password": this.param.password,
-          "imageCode":this.param.imgCode,
-          "imageCodeToken":this.imgCode}
-          console.log(param)
+            username: this.param.username,
+            password: this.param.password,
+            imageCode: this.param.imgCode,
+            imageCodeToken: this.imgCode,
+          };
+          console.log(param);
           //axios Api请求
           this.$axios({
             method: "post",
@@ -201,18 +208,18 @@ export default {
                 alert(response.data.message);
               } else {
                 this.$message.success("登录成功");
-                localStorage.setItem('token',response.data.content.token)
-                this.$store.state.token=response.data.content.token;
-                this.$store.state.id=response.data.content.id;
+                localStorage.setItem("token", response.data.content.token);
+                this.$store.state.token = response.data.content.token;
+                this.$store.state.id = response.data.content.id;
                 console.log(this.$store.state.token);
-                console.log(this.$store.state.id);  
-                this.$router.push('/')
+                console.log(this.$store.state.id);
+                this.$router.push("/");
               }
               console.log(response);
               console.log(response.data);
             })
             .catch((error) => {
-              console.log(error)
+              console.log(error);
               alert("error request");
             });
         } else {

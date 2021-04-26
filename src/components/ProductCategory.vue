@@ -210,6 +210,9 @@ export default {
     viewafter(id) {
       let _this = this;
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
         url: "/business/admin/productCategory/list/get-children/" + id,
         data: {},
@@ -228,6 +231,9 @@ export default {
       this.form.id = id;
       this.changetag(2);
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
         url: "/business/admin/productCategory/getCategoryById/" + id,
         data: {},
@@ -243,6 +249,9 @@ export default {
       let _this = this;
       this.tag = num;
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "get",
         url: "/business/admin/productCategory/list/withChildren",
         data: {},
@@ -254,11 +263,15 @@ export default {
     getproductCategory(pageindex, pagesize) {
       let param = { page: pageindex, size: pagesize };
       this.$axios({
+        headers: {
+          token: this.$store.state.token,
+        },
         method: "post",
         url: "/business/admin/productCategory/list",
         data: param,
       }).then((res) => {
         this.tablelist = res.data.content.list;
+        console.log(res)
       });
     },
     handledelete(proid) {
@@ -270,6 +283,9 @@ export default {
       })
         .then(() => {
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "delete",
             url: "/business/admin/productCategory/delete/" + proid,
             data: {},
@@ -305,6 +321,9 @@ export default {
           };
           console.log(param);
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url: "/business/admin/productCategory/create",
             data: param,
@@ -344,6 +363,9 @@ export default {
           };
           console.log(param);
           this.$axios({
+            headers: {
+              token: this.$store.state.token,
+            },
             method: "post",
             url: "/business/admin/productCategory/update",
             data: param,

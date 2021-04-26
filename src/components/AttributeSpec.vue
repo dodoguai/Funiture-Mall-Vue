@@ -182,6 +182,9 @@ export default {
         method: "get",
         url: "/business/admin/productCategory/list/withChildren",
         data: {},
+        headers: {
+        token: this.$store.state.token,
+      },
       }).then((res) => {
         console.log(res);
         _this.categorylevel1 = res.data.content;
@@ -195,6 +198,9 @@ export default {
         productAttributeCategoryId: this.$route.query.id,
       };
       this.$axios({
+        headers: {
+        token: this.$store.state.token,
+      },
         method: "post",
         url: "/business/admin/productAttribute/list",
         data: param,
@@ -212,6 +218,9 @@ export default {
       })
         .then(() => {
           this.$axios({
+            headers: {
+        token: this.$store.state.token,
+      },
             method: "delete",
             url: "/business/admin/productAttribute/delete/" + proid,
             data: {},
@@ -246,6 +255,9 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$axios({
+            headers: {
+        token: this.$store.state.token,
+      },
             method: "post",
             url: "/business/admin/productAttribute/create",
             data: param,
@@ -285,6 +297,9 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$axios({
+            headers: {
+        token: this.$store.state.token,
+      },
             method: "post",
             url: "/business/admin/productAttribute/update",
             data: param,
